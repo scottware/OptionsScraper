@@ -6,12 +6,6 @@ package com.scott.app.OptionsScraper;
 //import junit.framework.TestSuite;
 
 
-
-
-
-
-
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
