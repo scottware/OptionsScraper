@@ -1,6 +1,8 @@
 package com.scott.app.OptionsScraper;
 
 public class OptionsScraper {
+	final boolean DEBUG = true;
+
 	public static void main(String[] args) {
 		OptionsScraper OS = new OptionsScraper();
 		OS.go();
@@ -8,8 +10,10 @@ public class OptionsScraper {
 	}
 
 	public void go() {
-		Stock AAPL = new Stock("AAPL");
-		AAPL.fetchData();
+		Stock AAPL = new Stock("AAPL", DEBUG);
+		//AAPL.fetchData();
+		StockOptionPrinter sop = new StockOptionPrinter(AAPL);
+		sop.printPuts();
 	}
 
 }
