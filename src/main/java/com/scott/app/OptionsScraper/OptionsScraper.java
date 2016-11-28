@@ -10,10 +10,9 @@ public class OptionsScraper {
 	}
 
 	public void go() {
-		Stock AAPL = new Stock("AAPL", DEBUG);
-		//AAPL.fetchData();
-		StockOptionPrinter sop = new StockOptionPrinter(AAPL);
-		sop.printPuts();
+		Stock stock = new Stock("DKS", DEBUG);
+		stock.loadData();
+		stock.print();
 	}
 
 }

@@ -15,7 +15,7 @@ public class StockOptionPrinter {
 		this.stock = stock;
 	}
 
-	public static void printJSON(String json) {
+	public static void xprintJSON(String json) {
 		Map<?, ?> map = null;
 		try {
 			map = JSONHelper.parseText(json);
@@ -26,7 +26,7 @@ public class StockOptionPrinter {
 		JSONHelper.printJson(map);
 	}
 	
-	public void printPuts() {
+	public void xprintPuts() {
 		JSONObject jsonObject = this.stock.getJsonObject();
 
 //		Object oPuts = (Object) jsonObject.get("puts");
