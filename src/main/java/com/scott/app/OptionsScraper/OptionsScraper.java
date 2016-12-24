@@ -10,7 +10,7 @@ public class OptionsScraper {
 	}
 
 	public void go() {
-		Stock stock = new Stock("DKS", DEBUG);
+		Stock stock = new Stock("FB", DEBUG);
 		stock.loadData();
 		stock.print();
 	}
