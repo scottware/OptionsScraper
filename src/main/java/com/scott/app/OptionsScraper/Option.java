@@ -85,7 +85,7 @@ public class Option {
 		dataRow.add("$" + this.getPrice());
 		dataRow.add("$" + this.getAsk());
 		dataRow.add("$" + this.getBid());
-		dataRow.add(this.getRatio());
+		dataRow.add(String.format("%1$.2f",100*this.getRatio())+"%");
 		return dataRow;
 	}
 
