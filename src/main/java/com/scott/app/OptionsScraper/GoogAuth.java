@@ -1,6 +1,5 @@
 package com.scott.app.OptionsScraper;
 
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -35,7 +34,7 @@ public class GoogAuth {
 	private static FileDataStoreFactory DATA_STORE_FACTORY;
 
 	/** Global instance of the JSON factory. */
-	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+	private static JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
 	/** Global instance of the HTTP transport. */
 	private static HttpTransport HTTP_TRANSPORT;
@@ -93,38 +92,35 @@ public class GoogAuth {
 				.build();
 	}
 
-	public void foo() throws IOException {
+	public void foo(String title) throws IOException {
 		// Build a new authorized API client service.
 		Sheets service = getSheetsService();
 
-		// Prints the names and majors of students in a sample spreadsheet:
-		// https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-		// String spreadsheetId =
-		// "1SXN-J6J5ZOm2oQwncMuK-qu1QNs56Ym9o6RbKGbHRjs";
 		String spreadsheetId = "1ELoKfVKW-3UKMe5qXlx2uojuUAfJt-mVoT67pDGhlxw";
-		String range = "AAPL!A2:E3";
-		ValueRange readResponse = service.spreadsheets().values().get(spreadsheetId, range).execute();
-		List<List<Object>> values = readResponse.getValues();
-		if (values == null || values.size() == 0) {
-			System.out.println("No data found.");
-		} else {
-			System.out.println("Name, Major");
-			for (List row : values) {
-				// Print columns A and E, which correspond to indices 0 and 4.
-				System.out.printf("%s, %s\n", row.get(0), row.get(4));
-			}
-		 }
+//		String range = "AAPL!A2:E3";
+//		ValueRange readResponse = service.spreadsheets().values().get(spreadsheetId, range).execute();
+//		List<List<Object>> values = readResponse.getValues();
+//		if (values == null || values.size() == 0) {
+//			System.out.println("No data found.");
+//		} else {
+//			System.out.println("Name, Major");
+//			for (List row : values) {
+//				// Print columns A and E, which correspond to indices 0 and 4.
+//				System.out.printf("%s, %s\n", row.get(0), row.get(4));
+//			}
+//		}
 
 		// ------------------
 		List<Request> requests = new ArrayList<>();
-//		// Change the spreadsheet's title.
-		String title = "Options Worksheet";
+		// // Change the spreadsheet's title.
 		requests.add(new Request().setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
 				.setProperties(new SpreadsheetProperties().setTitle(title)).setFields("title")));
 
 		BatchUpdateSpreadsheetRequest body = new BatchUpdateSpreadsheetRequest().setRequests(requests);
 		BatchUpdateSpreadsheetResponse response = service.spreadsheets().batchUpdate(spreadsheetId, body).execute();
-//		FindReplaceResponse findReplaceResponse = response.getReplies().get(1).getFindReplace();
-//		System.out.printf("%d replacements made.", findReplaceResponse.getOccurrencesChanged());
+		// FindReplaceResponse findReplaceResponse =
+		// response.getReplies().get(1).getFindReplace();
+		// System.out.printf("%d replacements made.",
+		// findReplaceResponse.getOccurrencesChanged());
 	}
 }
