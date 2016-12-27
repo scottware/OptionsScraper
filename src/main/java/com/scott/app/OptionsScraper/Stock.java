@@ -1,7 +1,9 @@
 package com.scott.app.OptionsScraper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,6 +52,17 @@ public class Stock {
 		}
 	}
 
+	public List<List<Object>> toDataRange() {
+        List<List<Object>> writeData = new ArrayList<>();
+		Iterator<Option> iterator = this.options.iterator();
+		while (iterator.hasNext()) {
+			Option option = iterator.next();
+			writeData.add(option.toDataRow());
+		}
+		return writeData;
+
+	}
+	
 	public void print() {
 		System.out.println(this.getSymbol() + "  " + this.getUnderlyingPrice());
 		System.out.println("Type Expiration Strike Price Ask Bid");

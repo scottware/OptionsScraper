@@ -18,6 +18,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -92,35 +97,5 @@ public class GoogAuth {
 				.build();
 	}
 
-	public void foo(String title) throws IOException {
-		// Build a new authorized API client service.
-		Sheets service = getSheetsService();
 
-		String spreadsheetId = "1ELoKfVKW-3UKMe5qXlx2uojuUAfJt-mVoT67pDGhlxw";
-//		String range = "AAPL!A2:E3";
-//		ValueRange readResponse = service.spreadsheets().values().get(spreadsheetId, range).execute();
-//		List<List<Object>> values = readResponse.getValues();
-//		if (values == null || values.size() == 0) {
-//			System.out.println("No data found.");
-//		} else {
-//			System.out.println("Name, Major");
-//			for (List row : values) {
-//				// Print columns A and E, which correspond to indices 0 and 4.
-//				System.out.printf("%s, %s\n", row.get(0), row.get(4));
-//			}
-//		}
-
-		// ------------------
-		List<Request> requests = new ArrayList<>();
-		// // Change the spreadsheet's title.
-		requests.add(new Request().setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
-				.setProperties(new SpreadsheetProperties().setTitle(title)).setFields("title")));
-
-		BatchUpdateSpreadsheetRequest body = new BatchUpdateSpreadsheetRequest().setRequests(requests);
-		BatchUpdateSpreadsheetResponse response = service.spreadsheets().batchUpdate(spreadsheetId, body).execute();
-		// FindReplaceResponse findReplaceResponse =
-		// response.getReplies().get(1).getFindReplace();
-		// System.out.printf("%d replacements made.",
-		// findReplaceResponse.getOccurrencesChanged());
-	}
 }
