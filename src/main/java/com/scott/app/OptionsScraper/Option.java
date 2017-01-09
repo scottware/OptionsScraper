@@ -1,17 +1,22 @@
 package com.scott.app.OptionsScraper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Option {
 	public static final int PUT = 1;
 	public static final int CALL = 0;
 
-	private String date, strike, price, ask, bid;
+	private float strike, price, ask, bid;
 	private int type;
 	private float ratio;
+	private Date date;
+	private double apr;
 
-	public Option(int type, String strike, String price, String ask, String bid) {
+	public Option(int type, float strike, float price, float ask, float bid) {
 		this.setType(type);
 		this.setStrike(strike);
 		this.setPrice(price);
@@ -21,30 +26,33 @@ public class Option {
 	}
 
 	public String getDate() {
-		return date;
+		SimpleDateFormat dt1 = new SimpleDateFormat("M/dd/yyyyy");
+		return dt1.format(this.date);
 	}
 
 	public void setDate(String year, String month, String day) {
-		this.date = month + "/" + day + "/" + year;
+		Calendar cal = Calendar.getInstance();
+		cal.set(Integer.parseInt(year), Integer.parseInt(month)-1, Integer.parseInt(day));
+		this.date = cal.getTime();
 	}
 
-	public String getStrike() {
+	public Float getStrike() {
 		return strike;
 	}
 
-	public void setStrike(String strike) {
+	public void setStrike(float strike) {
 		this.strike = strike;
 	}
 
-	public String getPrice() {
+	public float getPrice() {
 		return price;
 	}
 
-	public void setPrice(String price) {
+	public void setPrice(Float price) {
 		this.price = price;
 	}
 
-	public String getType() {
+	public String getTypeAsString() {
 		if (type == CALL)
 			return "CALL";
 		else if (type == PUT)
@@ -53,14 +61,37 @@ public class Option {
 			return "unknown";
 	}
 
+	public int getType() {
+		return this.type;
+	}
+
 	public void setRatio() {
 		try {
-			Float price = Float.parseFloat(this.getPrice());
-			Float strike = Float.parseFloat(this.getStrike());
+			this.getPrice();
+			this.getStrike();
 			this.ratio = price / strike;
 		} catch (NumberFormatException e) {
 			this.ratio = 0.0f;
 		}
+	}
+
+	public void setAPR() {
+		Date today = Calendar.getInstance().getTime();
+		long days = (this.date.getTime() - today.getTime()) / 86400000;
+		double years = (double)days/365;
+		this.apr = Math.log( (this.getStrike() + this.getPrice()) / this.getStrike()) / years;
+		
+		
+		double a = ( this.getStrike() + this.getPrice() ) /this.getStrike();
+		double log = Math.log(a);
+
+		System.out.println(this.getStrike() + "*" + this.getPrice() + "*" + a+"*"+ log + "*"+years+"*"+this.date.toString()+"*"+days+"*"+this.apr);
+		// =ln(strike+price/strike)/(days/365)
+	}
+
+	public float getAPR() {
+		this.setAPR();
+		return (float) this.apr;
 	}
 
 	public float getRatio() {
@@ -79,29 +110,30 @@ public class Option {
 
 	public List<Object> toDataRow() {
 		List<Object> dataRow = new ArrayList<>();
-		dataRow.add(this.getType());
+		dataRow.add(this.getTypeAsString());
 		dataRow.add(this.getDate());
 		dataRow.add("$" + this.getStrike());
 		dataRow.add("$" + this.getPrice());
 		dataRow.add("$" + this.getAsk());
 		dataRow.add("$" + this.getBid());
-		dataRow.add(String.format("%1$.2f",100*this.getRatio())+"%");
+		dataRow.add(String.format("%1$.2f", 100 * this.getRatio()) + "%");
+		dataRow.add(String.format("%1$.2f", 100 * this.getAPR()) + "%");
 		return dataRow;
 	}
 
-	public String getAsk() {
+	public float getAsk() {
 		return ask;
 	}
 
-	public void setAsk(String ask) {
+	public void setAsk(float ask) {
 		this.ask = ask;
 	}
 
-	public String getBid() {
+	public float getBid() {
 		return bid;
 	}
 
-	public void setBid(String bid) {
+	public void setBid(float bid) {
 		this.bid = bid;
 	}
 }

@@ -1,6 +1,7 @@
 package com.scott.app.OptionsScraper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,11 +53,12 @@ public class Stock {
 		}
 	}
 
-	public List<List<Object>> toDataRange() {
+	public List<List<Object>> optionChainToDataRange(int type) {
         List<List<Object>> writeData = new ArrayList<>();
 		Iterator<Option> iterator = this.options.iterator();
 		while (iterator.hasNext()) {
 			Option option = iterator.next();
+			if(option.getType()==type)
 			writeData.add(option.toDataRow());
 		}
 		return writeData;

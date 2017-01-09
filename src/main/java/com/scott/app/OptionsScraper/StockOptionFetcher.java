@@ -1,5 +1,6 @@
 package com.scott.app.OptionsScraper;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -62,19 +63,27 @@ public class StockOptionFetcher {
 		while (optionsIterator.hasNext()) {
 			Object oO = optionsIterator.next();
 			JSONObject oOption = (JSONObject) oO;
-			String strike = oOption.get("strike").toString();
-			String price = oOption.get("p").toString();
-			String ask = oOption.get("a").toString();
-			String bid = oOption.get("b").toString();
-			Option option = new Option(optionType, strike, price, ask, bid);
-			option.setDate(year, month, day);
-			optionSet.add(option);
+			String sStrike = oOption.get("strike").toString();
+			String sPrice = oOption.get("p").toString();
+			String sAsk = oOption.get("a").toString();
+			String sBid = oOption.get("b").toString();
+			try {
+				float strike = Float.parseFloat(sStrike);
+				float price = Float.parseFloat(sPrice);
+				float ask = Float.parseFloat(sAsk);
+				float bid = Float.parseFloat(sBid);
+				Option option = new Option(optionType, strike, price, ask, bid);
+				option.setDate(year, month, day);
+				optionSet.add(option);
+			} catch (NumberFormatException e) {
+				//e.printStackTrace();
+				//TODO not handling where there are commas: 1,050.00
+			}
+
 			// System.out.println(" " + oPut.get("strike").toString() + " "
 			// + oPut.get("p").toString());
 		}
 	}
-
-
 
 	public JSONObject fetchLeapData() {
 		String scrapedURL;
