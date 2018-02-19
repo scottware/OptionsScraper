@@ -6,11 +6,11 @@ package com.scott.app.OptionsScraper;
 //import junit.framework.TestSuite;
 
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+//import org.junit.runner.RunWith;
+//import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ StockTest.class, ScraperTest.class})
+//@RunWith(Suite.class)
+//@Suite.SuiteClasses({ StockTest.class, ScraperTest.class})
 
 public class AppTest {
 	// the class remains empty,
