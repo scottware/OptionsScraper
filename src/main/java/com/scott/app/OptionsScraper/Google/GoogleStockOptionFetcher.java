@@ -1,20 +1,24 @@
-package com.scott.app.OptionsScraper;
+package com.scott.app.OptionsScraper.Google;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.scott.app.OptionsScraper.IStockOptionFetcher;
+import com.scott.app.OptionsScraper.Option;
+import com.scott.app.OptionsScraper.Scraper;
+import com.scott.app.OptionsScraper.Stock;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class StockOptionFetcher {
+public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 	private Stock stock;
 
-	public StockOptionFetcher(Stock stock) {
+	public GoogleStockOptionFetcher setStock(Stock stock) {
 		this.stock = stock;
+		return this;
 	}
 
 	public String getLeapURL() {

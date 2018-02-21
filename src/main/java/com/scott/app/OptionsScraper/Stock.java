@@ -1,17 +1,11 @@
 package com.scott.app.OptionsScraper;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class Stock {
 	private JSONObject jsonObject = null;
@@ -46,9 +40,10 @@ public class Stock {
 		return this.underlying_price;
 	}
 
-	public void loadData() {
+	public void loadData(IStockOptionFetcher stockOptionFetcher) {
+		IStockOptionFetcher sof = stockOptionFetcher;
 		if (options == null) {
-			StockOptionFetcher sof = new StockOptionFetcher(this);
+			//StockOptionFetcher sof = new StockOptionFetcher(this);
 			this.options = sof.fetchData();
 		}
 	}

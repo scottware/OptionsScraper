@@ -4,30 +4,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.Sheets.Spreadsheets;
-import com.google.api.services.sheets.v4.model.AppendCellsRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
 import com.google.api.services.sheets.v4.model.CellData;
-import com.google.api.services.sheets.v4.model.CellFormat;
-import com.google.api.services.sheets.v4.model.ExtendedValue;
 import com.google.api.services.sheets.v4.model.GridRange;
-import com.google.api.services.sheets.v4.model.NumberFormat;
 import com.google.api.services.sheets.v4.model.Request;
 import com.google.api.services.sheets.v4.model.RowData;
 import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.UpdateCellsRequest;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import com.scott.app.OptionsScraper.Google.GoogleStockOptionFetcher;
+import com.scott.app.OptionsScraper.TDA.TDAStockOptionFetcher;
 
 public class OptionsScraper {
 	final boolean DEBUG = false;
 	private final String spreadsheetId = "1ELoKfVKW-3UKMe5qXlx2uojuUAfJt-mVoT67pDGhlxw";
 
 	public static void main(String[] args) {
+		TDAStockOptionFetcher a = new TDAStockOptionFetcher();
+
 		OptionsScraper OS = new OptionsScraper();
 		String symbol = "AMZN";
 		int sheetId = 275886970;
@@ -141,7 +138,7 @@ public class OptionsScraper {
 
 	public void go(String symbol, int sheetId) {
 		Stock stock = new Stock(symbol, DEBUG);
-		stock.loadData();
+		stock.loadData(new GoogleStockOptionFetcher().setStock(stock));
 		// stock.print();
 		this.setHeaders(sheetId);
 		this.setCurrentPrice(sheetId, Float.parseFloat(stock.getUnderlyingPrice()));

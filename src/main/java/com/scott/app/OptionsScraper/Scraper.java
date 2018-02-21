@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class Scraper {
 
-	static protected String getURL(String u) {
+	static public String getURL(String u) {
 		URL url;
 		InputStream is;
 		InputStreamReader isr;
