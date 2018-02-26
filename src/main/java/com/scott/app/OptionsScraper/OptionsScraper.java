@@ -22,8 +22,13 @@ public class OptionsScraper {
 	final boolean DEBUG = false;
 	private final String spreadsheetId = "1ELoKfVKW-3UKMe5qXlx2uojuUAfJt-mVoT67pDGhlxw";
 
+	enum Source {
+		TDA, GOOG, YHOO
+	}
+
+	private Source OptionServiceSource = Source.GOOG;
+
 	public static void main(String[] args) {
-		TDAStockOptionFetcher a = new TDAStockOptionFetcher();
 
 		OptionsScraper OS = new OptionsScraper();
 		String symbol = "AMZN";
@@ -138,7 +143,15 @@ public class OptionsScraper {
 
 	public void go(String symbol, int sheetId) {
 		Stock stock = new Stock(symbol, DEBUG);
-		stock.loadData(new GoogleStockOptionFetcher().setStock(stock));
+
+		switch (OptionServiceSource) {
+			case TDA:
+				stock.loadData(new TDAStockOptionFetcher().setStock(stock));
+				break;
+			case GOOG:
+				stock.loadData(new GoogleStockOptionFetcher().setStock(stock));
+				break;
+		}
 		// stock.print();
 		this.setHeaders(sheetId);
 		this.setCurrentPrice(sheetId, Float.parseFloat(stock.getUnderlyingPrice()));
