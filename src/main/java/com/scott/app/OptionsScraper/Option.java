@@ -26,8 +26,12 @@ public class Option {
 	}
 
 	public String getDate() {
-		SimpleDateFormat dt1 = new SimpleDateFormat("M/dd/yyyyy");
+		SimpleDateFormat dt1 = new SimpleDateFormat("M/dd/yyyy");
 		return dt1.format(this.date);
+	}
+
+	public void setDate(Long epoch) {
+		this.date = new Date(epoch);
 	}
 
 	public void setDate(String year, String month, String day) {

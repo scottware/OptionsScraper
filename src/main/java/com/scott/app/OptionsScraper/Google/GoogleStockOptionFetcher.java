@@ -4,14 +4,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.scott.app.OptionsScraper.IStockOptionFetcher;
-import com.scott.app.OptionsScraper.Option;
-import com.scott.app.OptionsScraper.Scraper;
-import com.scott.app.OptionsScraper.Stock;
+import com.scott.app.OptionsScraper.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+// https://query1.finance.yahoo.com/v7/finance/options/AMZN
+// https://query1.finance.yahoo.com/v7/finance/options/AMZN180302C01497500
 
 public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 	private Stock stock;
@@ -95,7 +95,7 @@ public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 
 		scrapedURL = Scraper.getURL(leapurl);
 		scrapedURL = Scraper.cleanJSON(scrapedURL);
-		JSONObject jsonObject = this.parseData(scrapedURL);
+		JSONObject jsonObject = JSONHelper.parseData(scrapedURL);
 		this.stock.setUnderlyingPrice(jsonObject.get("underlying_price").toString());
 		return jsonObject;
 	}
@@ -108,19 +108,8 @@ public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 
 		scrapedURL = Scraper.cleanJSON(scrapedURL);
 		// StockOptionPrinter.printJSON(scrapedURL);
-		return this.parseData(scrapedURL);
+		return JSONHelper.parseData(scrapedURL);
 	}
 
-	private JSONObject parseData(String data) {
-		JSONParser parser = new JSONParser();
-		Object obj = null;
-		try {
-			obj = parser.parse(data);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return (JSONObject) obj;
-	}
 
 }

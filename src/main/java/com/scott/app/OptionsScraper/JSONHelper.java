@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -92,4 +93,18 @@ public  class JSONHelper {
 				System.out.println(indent + "(H)" + key1 + " : " + value1);
 		}
 	}
+
+	public static JSONObject parseData(String data) {
+		JSONParser parser = new JSONParser();
+		Object obj = null;
+		try {
+			obj = parser.parse(data);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return (JSONObject) obj;
+	}
+
+
 }

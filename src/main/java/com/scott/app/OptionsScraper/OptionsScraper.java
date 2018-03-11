@@ -17,6 +17,7 @@ import com.google.api.services.sheets.v4.model.UpdateCellsRequest;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.scott.app.OptionsScraper.Google.GoogleStockOptionFetcher;
 import com.scott.app.OptionsScraper.TDA.TDAStockOptionFetcher;
+import com.scott.app.OptionsScraper.Yahoo.YahooStockOptionFetcher;
 
 public class OptionsScraper {
 	final boolean DEBUG = false;
@@ -26,7 +27,7 @@ public class OptionsScraper {
 		TDA, GOOG, YHOO
 	}
 
-	private Source OptionServiceSource = Source.GOOG;
+	private Source OptionServiceSource = Source.YHOO;
 
 	public static void main(String[] args) {
 
@@ -151,25 +152,32 @@ public class OptionsScraper {
 			case GOOG:
 				stock.loadData(new GoogleStockOptionFetcher().setStock(stock));
 				break;
+			case YHOO:
+				stock.loadData(new YahooStockOptionFetcher().setStock(stock));
+				break;
 		}
-		// stock.print();
-		this.setHeaders(sheetId);
-		this.setCurrentPrice(sheetId, Float.parseFloat(stock.getUnderlyingPrice()));
-		String writeRange = symbol + "!A2:H";
+		 stock.print();
 
-		List<List<Object>> writeData = stock.optionChainToDataRange(Option.PUT);
+		return;
 
-		ValueRange valueRange = new ValueRange().setValues(writeData).setMajorDimension("ROWS");
-		System.out.println(valueRange.toString());
-		try {
-			Sheets service = GoogAuth.getSheetsService();
-			service.spreadsheets().values().update(this.spreadsheetId, writeRange, valueRange)
-					.setValueInputOption("USER_ENTERED").execute();
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		this.setHeaders(sheetId);
+//		this.setCurrentPrice(sheetId, Float.parseFloat(stock.getUnderlyingPrice()));
+//		String writeRange = symbol + "!A2:H";
+//
+//		List<List<Object>> writeData = stock.optionChainToDataRange(Option.PUT);
+//
+//		ValueRange valueRange = new ValueRange().setValues(writeData).setMajorDimension("ROWS");
+//		System.out.println(valueRange.toString());
+//		try {
+//			Sheets service = GoogAuth.getSheetsService();
+//			service.spreadsheets().values().update(this.spreadsheetId, writeRange, valueRange)
+//					.setValueInputOption("USER_ENTERED").execute();
+//
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 

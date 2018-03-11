@@ -49,26 +49,27 @@ public class Stock {
 	}
 
 	public List<List<Object>> optionChainToDataRange(int type) {
-        List<List<Object>> writeData = new ArrayList<>();
+		List<List<Object>> writeData = new ArrayList<>();
 		Iterator<Option> iterator = this.options.iterator();
 		while (iterator.hasNext()) {
 			Option option = iterator.next();
-			if(option.getType()==type)
-			writeData.add(option.toDataRow());
+			if (option.getType() == type)
+				writeData.add(option.toDataRow());
 		}
 		return writeData;
 
 	}
-	
+
 	public void print() {
 		System.out.println(this.getSymbol() + "  " + this.getUnderlyingPrice());
 		System.out.println("Type Expiration Strike Price Ask Bid");
-		Iterator<Option> iterator = this.options.iterator();
-		while (iterator.hasNext()) {
-			Option option = iterator.next();
-			System.out.println(option.toString());
+		if (this.options != null) {
+			Iterator<Option> iterator = this.options.iterator();
+			while (iterator.hasNext()) {
+				Option option = iterator.next();
+				System.out.println(option.toString());
+			}
 		}
-
 	}
 
 }
