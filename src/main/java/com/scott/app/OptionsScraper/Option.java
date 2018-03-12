@@ -107,7 +107,7 @@ public class Option {
 	}
 
 	public String toString() {
-		String output = this.getType() + " " + this.getDate() + " $" + this.getStrike() + " $" + this.getPrice() + " "
+		String output = this.getTypeAsString() + " " + this.getDate() + " $" + this.getStrike() + " $" + this.getPrice() + " "
 				+ this.getAsk() + " " + this.getBid() + " " + Float.toString(this.getRatio());
 		return output;
 	}
