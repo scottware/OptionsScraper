@@ -157,7 +157,7 @@ public class OptionsScraper {
 				break;
 		}
 		stock.sortByAPR();
-		stock.print();
+		stock.print(Option.PUT);
 
 		return;
 

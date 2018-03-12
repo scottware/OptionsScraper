@@ -9,6 +9,7 @@ import java.util.List;
 public class Option {
 	public static final int PUT = 1;
 	public static final int CALL = 0;
+	public static final int ANY = -1;
 
 	private float strike, price, ask, bid;
 	private int type;
@@ -85,11 +86,11 @@ public class Option {
 		Date today = Calendar.getInstance().getTime();
 		long days = (this.date.getTime() - today.getTime()) / 86400000;
 		double years = (double) days / 365;
-		this.apr = Math.log((this.getStock().getUnderlyingPrice() + this.getBid()) / this.getStock().getUnderlyingPrice()) / years;
+		this.apr = 100 * Math.log((this.getStock().getUnderlyingPrice() + this.getBid()) / this.getStock().getUnderlyingPrice()) / years;
 
 
-		double a = (this.getStrike() + this.getPrice()) / this.getStrike();
-		double log = Math.log(a);
+		//	double a = (this.getStrike() + this.getPrice()) / this.getStrike();
+		//	double log = Math.log(a);
 		//System.out.println(days + " days. price: " + this.getStock().getUnderlyingPrice().toString());
 		//System.out.println(this.getStrike() + "*" + this.getPrice() + "*" + a + "*" + log + "*" + years + "*" + this.date.toString() + "*" + days + "*" + this.apr);
 		// =ln(strike+price/strike)/(days/365)

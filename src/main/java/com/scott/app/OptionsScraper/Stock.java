@@ -61,14 +61,15 @@ public class Stock {
 		Collections.sort(this.options, new SortByAPR());
 	}
 
-	public void print() {
+	public void print(int type) {
 		System.out.println(this.getSymbol() + "  " + this.getUnderlyingPrice().toString());
 		System.out.println("Type Expiration Strike Price Ask Bid");
 		if (this.options != null) {
 			Iterator<Option> iterator = this.options.iterator();
 			while (iterator.hasNext()) {
 				Option option = iterator.next();
-				System.out.println(option.toString());
+				if (type == Option.ANY || option.getType() == type)
+					System.out.println(option.toString());
 			}
 		}
 	}
