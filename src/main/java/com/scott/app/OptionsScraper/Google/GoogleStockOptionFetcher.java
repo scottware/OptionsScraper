@@ -1,5 +1,6 @@
 package com.scott.app.OptionsScraper.Google;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -30,10 +31,10 @@ public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 				+ month + "&expy=" + year + "&output=json";
 	}
 
-	public Set<Option> fetchData() {
+	public ArrayList<Option> fetchData() {
 		JSONObject leapObject = fetchLeapData();
 		// System.out.println(leapObject.toString());
-		Set<Option> options = new HashSet<Option>();
+		ArrayList<Option> options = new ArrayList<>();
 
 		Object oExpirations = (Object) leapObject.get("expirations");
 		JSONArray expirations = (JSONArray) oExpirations;
@@ -60,7 +61,7 @@ public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 
 	}
 
-	private void processOption(JSONArray oOptions, Set<Option> optionSet, int optionType, String year, String month,
+	private void processOption(JSONArray oOptions, ArrayList<Option> optionSet, int optionType, String year, String month,
 			String day) {
 		JSONArray options = (JSONArray) oOptions;
 		Iterator<String> optionsIterator = options.iterator();
@@ -76,7 +77,7 @@ public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 				float price = Float.parseFloat(sPrice);
 				float ask = Float.parseFloat(sAsk);
 				float bid = Float.parseFloat(sBid);
-				Option option = new Option(optionType, strike, price, ask, bid);
+				Option option = new Option(stock, optionType, strike, price, ask, bid);
 				option.setDate(year, month, day);
 				optionSet.add(option);
 			} catch (NumberFormatException e) {

@@ -4,6 +4,8 @@ import com.scott.app.OptionsScraper.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -28,9 +30,9 @@ public class YahooStockOptionFetcher implements IStockOptionFetcher {
 	}
 
 	@Override
-	public Set<Option> fetchData() {
+	public ArrayList<Option> fetchData() {
 
-		Set<Option> options = new HashSet<Option>();
+		ArrayList<Option> options = new ArrayList<Option>();
 		stock.setUnderlyingPrice(fetchSharePrice());
 
 		Iterator expirationDatesIterator = fetchOptionDates();
@@ -39,17 +41,17 @@ public class YahooStockOptionFetcher implements IStockOptionFetcher {
 			String expirationDate = expirationDatesIterator.next().toString();
 			String OptionDateUrl = optionDateBaseUrl + expirationDate;
 
-			Set<Option> tempSet = fetchExpriationDate(OptionDateUrl);
+			ArrayList<Option> tempSet = fetchExpriationDate(OptionDateUrl);
 			options.addAll(tempSet);
 		}
 
 		return options;
 	}
 
-	Set<Option> fetchExpriationDate(String optionDateUrl) {
+	ArrayList<Option> fetchExpriationDate(String optionDateUrl) {
 		// Given a URL for an expiration date, fetch the content and return a Set of all options for that expiration
 
-		Set<Option> optionSet = new HashSet<Option>();
+		ArrayList<Option> optionSet = new ArrayList<>();
 
 		String scrapedURL = Scraper.getURL(optionDateUrl);
 		JSONObject data = JSONHelper.parseData(scrapedURL);
@@ -68,8 +70,9 @@ public class YahooStockOptionFetcher implements IStockOptionFetcher {
 			Float ask = Float.parseFloat(putJSONObject.get("ask").toString());
 			Float lastPrice = Float.parseFloat(putJSONObject.get("lastPrice").toString());
 			Long expiration = 1000L * Long.parseLong(putJSONObject.get("expiration").toString());
-			Option option = new Option(Option.PUT, strike, lastPrice, ask, bid);
+			Option option = new Option(stock, Option.PUT, strike, lastPrice, ask, bid);
 			option.setDate(expiration);
+			option.setAPR();
 			optionSet.add(option);
 		}
 		JSONArray calls = (JSONArray) optionList.get("calls");
@@ -81,8 +84,9 @@ public class YahooStockOptionFetcher implements IStockOptionFetcher {
 			Float ask = Float.parseFloat(callJSONObject.get("ask").toString());
 			Float lastPrice = Float.parseFloat(callJSONObject.get("lastPrice").toString());
 			Long expiration = 1000L * Long.parseLong(callJSONObject.get("expiration").toString());
-			Option option = new Option(Option.CALL, strike, lastPrice, ask, bid);
+			Option option = new Option(stock, Option.CALL, strike, lastPrice, ask, bid);
 			option.setDate(expiration);
+			option.setAPR();
 			optionSet.add(option);
 		}
 		return optionSet;

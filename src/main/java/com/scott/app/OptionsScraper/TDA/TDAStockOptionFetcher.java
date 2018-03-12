@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -119,7 +120,7 @@ public class TDAStockOptionFetcher implements IStockOptionFetcher {
 	}
 
 	@Override
-	public Set<Option> fetchData() {
+	public ArrayList<Option> fetchData() {
 		return null;
 	}
 }

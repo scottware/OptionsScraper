@@ -1,19 +1,16 @@
 package com.scott.app.OptionsScraper;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.json.simple.JSONObject;
 
 public class Stock {
 	private JSONObject jsonObject = null;
 	private String symbol;
-	private String underlying_price;
+	private Float underlying_price;
 	private boolean DEBUG;
 	final boolean LEAP = true;
-	private Set<Option> options = null;
+	private ArrayList<Option> options = null;
 
 	public Stock(String symbol) {
 		this(symbol, false);
@@ -33,10 +30,10 @@ public class Stock {
 	}
 
 	public void setUnderlyingPrice(String price) {
-		this.underlying_price = price;
+		this.underlying_price = Float.parseFloat(price);
 	}
 
-	public String getUnderlyingPrice() {
+	public Float getUnderlyingPrice() {
 		return this.underlying_price;
 	}
 
@@ -60,8 +57,12 @@ public class Stock {
 
 	}
 
+	public void sortByAPR() {
+		Collections.sort(this.options, new SortByAPR());
+	}
+
 	public void print() {
-		System.out.println(this.getSymbol() + "  " + this.getUnderlyingPrice());
+		System.out.println(this.getSymbol() + "  " + this.getUnderlyingPrice().toString());
 		System.out.println("Type Expiration Strike Price Ask Bid");
 		if (this.options != null) {
 			Iterator<Option> iterator = this.options.iterator();
@@ -72,4 +73,13 @@ public class Stock {
 		}
 	}
 
+}
+
+
+class SortByAPR implements Comparator<Option> {
+	public int compare(Option a, Option b) {
+		if (a.getAPR() > b.getAPR()) return -1;
+		else if (a.getAPR() < b.getAPR()) return 1;
+		else return 0;
+	}
 }

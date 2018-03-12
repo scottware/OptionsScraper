@@ -15,14 +15,16 @@ public class Option {
 	private float ratio;
 	private Date date;
 	private double apr;
+	private Stock stock;
 
-	public Option(int type, float strike, float price, float ask, float bid) {
+	public Option(Stock stock, int type, float strike, float price, float ask, float bid) {
 		this.setType(type);
 		this.setStrike(strike);
 		this.setPrice(price);
 		this.setAsk(ask);
 		this.setBid(bid);
 		this.setRatio();
+		this.setStock(stock);
 	}
 
 	public String getDate() {
@@ -36,7 +38,7 @@ public class Option {
 
 	public void setDate(String year, String month, String day) {
 		Calendar cal = Calendar.getInstance();
-		cal.set(Integer.parseInt(year), Integer.parseInt(month)-1, Integer.parseInt(day));
+		cal.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(day));
 		this.date = cal.getTime();
 	}
 
@@ -82,19 +84,19 @@ public class Option {
 	public void setAPR() {
 		Date today = Calendar.getInstance().getTime();
 		long days = (this.date.getTime() - today.getTime()) / 86400000;
-		double years = (double)days/365;
-		this.apr = Math.log( (this.getStrike() + this.getPrice()) / this.getStrike()) / years;
-		
-		
-		double a = ( this.getStrike() + this.getPrice() ) /this.getStrike();
-		double log = Math.log(a);
+		double years = (double) days / 365;
+		this.apr = Math.log((this.getStock().getUnderlyingPrice() + this.getBid()) / this.getStock().getUnderlyingPrice()) / years;
 
-		System.out.println(this.getStrike() + "*" + this.getPrice() + "*" + a+"*"+ log + "*"+years+"*"+this.date.toString()+"*"+days+"*"+this.apr);
+
+		double a = (this.getStrike() + this.getPrice()) / this.getStrike();
+		double log = Math.log(a);
+		//System.out.println(days + " days. price: " + this.getStock().getUnderlyingPrice().toString());
+		//System.out.println(this.getStrike() + "*" + this.getPrice() + "*" + a + "*" + log + "*" + years + "*" + this.date.toString() + "*" + days + "*" + this.apr);
 		// =ln(strike+price/strike)/(days/365)
 	}
 
 	public float getAPR() {
-		this.setAPR();
+		//this.setAPR();
 		return (float) this.apr;
 	}
 
@@ -108,7 +110,7 @@ public class Option {
 
 	public String toString() {
 		String output = this.getTypeAsString() + " " + this.getDate() + " $" + this.getStrike() + " $" + this.getPrice() + " "
-				+ this.getAsk() + " " + this.getBid() + " " + Float.toString(this.getRatio());
+				+ this.getAsk() + " " + this.getBid() + " " + Float.toString(this.getRatio()) + " " + String.format("%.2f", this.getAPR()) + "%";
 		return output;
 	}
 
@@ -139,5 +141,13 @@ public class Option {
 
 	public void setBid(float bid) {
 		this.bid = bid;
+	}
+
+	public void setStock(Stock stock) {
+		this.stock = stock;
+	}
+
+	public Stock getStock() {
+		return stock;
 	}
 }

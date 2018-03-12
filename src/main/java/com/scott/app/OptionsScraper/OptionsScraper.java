@@ -156,7 +156,8 @@ public class OptionsScraper {
 				stock.loadData(new YahooStockOptionFetcher().setStock(stock));
 				break;
 		}
-		 stock.print();
+		stock.sortByAPR();
+		stock.print();
 
 		return;
 
