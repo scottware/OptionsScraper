@@ -10,6 +10,6 @@ import java.util.Set;
 public interface IStockOptionFetcher {
 
     public IStockOptionFetcher setStock(Stock stock);
-    public ArrayList<Option> fetchData();
+    public ArrayListFilterable<Option> fetchData();
 
 }

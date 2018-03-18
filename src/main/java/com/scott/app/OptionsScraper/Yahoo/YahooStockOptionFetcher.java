@@ -5,7 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
+import com.scott.app.OptionsScraper.ArrayListFilterable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -30,9 +30,9 @@ public class YahooStockOptionFetcher implements IStockOptionFetcher {
 	}
 
 	@Override
-	public ArrayList<Option> fetchData() {
+	public ArrayListFilterable<Option> fetchData() {
 
-		ArrayList<Option> options = new ArrayList<Option>();
+		ArrayListFilterable<Option> options = new ArrayListFilterable<Option>();
 		stock.setUnderlyingPrice(fetchSharePrice());
 
 		Iterator expirationDatesIterator = fetchOptionDates();
@@ -41,17 +41,17 @@ public class YahooStockOptionFetcher implements IStockOptionFetcher {
 			String expirationDate = expirationDatesIterator.next().toString();
 			String OptionDateUrl = optionDateBaseUrl + expirationDate;
 
-			ArrayList<Option> tempSet = fetchExpriationDate(OptionDateUrl);
+			ArrayListFilterable<Option> tempSet = fetchExpriationDate(OptionDateUrl);
 			options.addAll(tempSet);
 		}
 
 		return options;
 	}
 
-	ArrayList<Option> fetchExpriationDate(String optionDateUrl) {
+	ArrayListFilterable<Option> fetchExpriationDate(String optionDateUrl) {
 		// Given a URL for an expiration date, fetch the content and return a Set of all options for that expiration
 
-		ArrayList<Option> optionSet = new ArrayList<>();
+		ArrayListFilterable<Option> optionSet = new ArrayListFilterable<>();
 
 		String scrapedURL = Scraper.getURL(optionDateUrl);
 		JSONObject data = JSONHelper.parseData(scrapedURL);

@@ -28,25 +28,35 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GoogAuth {
-	/** Application name. */
+	/**
+	 * Application name.
+	 */
 	private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
 
-	/** Directory to store user credentials for this application. */
+	/**
+	 * Directory to store user credentials for this application.
+	 */
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(System.getProperty("user.home"),
 			".credentials/sheets.googleapis.com-java-quickstart");
 
-	/** Global instance of the {@link FileDataStoreFactory}. */
+	/**
+	 * Global instance of the {@link FileDataStoreFactory}.
+	 */
 	private static FileDataStoreFactory DATA_STORE_FACTORY;
 
-	/** Global instance of the JSON factory. */
+	/**
+	 * Global instance of the JSON factory.
+	 */
 	private static JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-	/** Global instance of the HTTP transport. */
+	/**
+	 * Global instance of the HTTP transport.
+	 */
 	private static HttpTransport HTTP_TRANSPORT;
 
 	/**
 	 * Global instance of the scopes required by this quickstart.
-	 *
+	 * <p>
 	 * If modifying these scopes, delete your previously saved credentials at
 	 * ~/.credentials/sheets.googleapis.com-java-quickstart
 	 */
@@ -64,16 +74,15 @@ public class GoogAuth {
 
 	/**
 	 * Creates an authorized Credential object.
-	 * 
+	 *
 	 * @return an authorized Credential object.
 	 * @throws IOException
 	 */
-	public static Credential authorize() throws IOException {
+	public static Credential authorize(String client_secret_path) throws IOException {
 		// Load client secrets.
 		// InputStream in =
 		// Quickstart.class.getResourceAsStream("/client_secret.json");
-		InputStream in = new FileInputStream(
-				"/Users/sware/Documents/workspace/GDocExperiment/dependencies/client_secret4.json");
+		InputStream in = new FileInputStream(client_secret_path);
 		System.out.println("Bytes: " + in.available());
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
@@ -87,16 +96,16 @@ public class GoogAuth {
 
 	/**
 	 * Build and return an authorized Sheets API client service.
-	 * 
+	 *
 	 * @return an authorized Sheets API client service
 	 * @throws IOException
 	 */
-	public static Sheets getSheetsService() throws IOException {
-		Credential credential = authorize();
+	public static Sheets getSheetsService(String client_secret_path) throws IOException {
+
+		Credential credential = authorize(client_secret_path);
 		return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME)
 				.build();
 	}
 
 
-	
 }

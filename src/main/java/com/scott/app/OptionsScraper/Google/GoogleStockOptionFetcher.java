@@ -1,6 +1,6 @@
 package com.scott.app.OptionsScraper.Google;
 
-import java.util.ArrayList;
+import com.scott.app.OptionsScraper.ArrayListFilterable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -31,10 +31,10 @@ public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 				+ month + "&expy=" + year + "&output=json";
 	}
 
-	public ArrayList<Option> fetchData() {
+	public ArrayListFilterable<Option> fetchData() {
 		JSONObject leapObject = fetchLeapData();
 		// System.out.println(leapObject.toString());
-		ArrayList<Option> options = new ArrayList<>();
+		ArrayListFilterable<Option> options = new ArrayListFilterable<>();
 
 		Object oExpirations = (Object) leapObject.get("expirations");
 		JSONArray expirations = (JSONArray) oExpirations;
@@ -61,7 +61,7 @@ public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 
 	}
 
-	private void processOption(JSONArray oOptions, ArrayList<Option> optionSet, int optionType, String year, String month,
+	private void processOption(JSONArray oOptions, ArrayListFilterable<Option> optionSet, int optionType, String year, String month,
 			String day) {
 		JSONArray options = (JSONArray) oOptions;
 		Iterator<String> optionsIterator = options.iterator();

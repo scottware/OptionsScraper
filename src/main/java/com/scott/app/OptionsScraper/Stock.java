@@ -10,7 +10,7 @@ public class Stock {
 	private Float underlying_price;
 	private boolean DEBUG;
 	final boolean LEAP = true;
-	private ArrayList<Option> options = null;
+	private ArrayListFilterable<Option> options = null;
 
 	public Stock(String symbol) {
 		this(symbol, false);
@@ -61,21 +61,29 @@ public class Stock {
 		Collections.sort(this.options, new SortByAPR());
 	}
 
-	public void print(int type) {
+	public void print() {
 		System.out.println(this.getSymbol() + "  " + this.getUnderlyingPrice().toString());
 		System.out.println("Type Expiration Strike Price Ask Bid");
+		ArrayListFilterable<Option> q = ArrayListFilterable.filter(options, new Filter());
 		if (this.options != null) {
-			Iterator<Option> iterator = this.options.iterator();
+			Iterator<Option> iterator = q.iterator();//this.options.iterator();
 			while (iterator.hasNext()) {
 				Option option = iterator.next();
-				if (type == Option.ANY || option.getType() == type)
-					System.out.println(option.toString());
+				System.out.println(option.toString());
 			}
 		}
 	}
 
 }
 
+class Filter implements Filters<Option> {
+	public boolean meetsRequirement(Option element) {
+		if (element.getAPR() > 27.0 && element.getAPR() < 31.0 && element.getType() == Option.PUT)
+			return true;
+		else
+			return false;
+	}
+}
 
 class SortByAPR implements Comparator<Option> {
 	public int compare(Option a, Option b) {
