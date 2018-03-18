@@ -1,8 +1,11 @@
 package com.scott.app.OptionsScraper;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
@@ -22,32 +25,68 @@ import com.scott.app.OptionsScraper.Yahoo.YahooStockOptionFetcher;
 public class OptionsScraper {
 	final boolean DEBUG = false;
 	private final String spreadsheetId = "1ELoKfVKW-3UKMe5qXlx2uojuUAfJt-mVoT67pDGhlxw";
+	public static Properties properties;
 
 	enum Source {
 		TDA, GOOG, YHOO
 	}
 
-	private Source OptionServiceSource = Source.YHOO;
-
 	public static void main(String[] args) {
 
 		OptionsScraper OS = new OptionsScraper();
-		String symbol = "AMZN";
-		int sheetId = 275886970;
-		// OS.read();
-		//OS.testStuff(sheetId, symbol);
-		OS.go(symbol, sheetId);
+		try {
+			properties = OS.loadProperties();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
 
+
+//		String symbol = "^GSPC";
+
+		// Set the symbol to research
+		String symbol = properties.getProperty("symbol".toLowerCase()).toUpperCase();
+
+		// Set the data source to scrape from
+		Source dataSource = Source.YHOO;
+		try {
+			dataSource = Source.valueOf(properties.getProperty("source".toLowerCase(), "YHOO").toUpperCase());
+		} catch (IllegalArgumentException e) {
+			//e.printStackTrace();
+		}
+		System.out.println("Source: " + dataSource);
+
+
+		Stock stock = OS.go(symbol, dataSource);
+		stock.sortByAPR();
+		stock.print();
+		int sheetId = 275886970;
+		OS.writeToGoogleSheets(stock, sheetId);
 	}
 
-	public void read() {
+	public Properties loadProperties() throws FileNotFoundException, IOException {
+		String property = System.getProperty("user.dir");
+		System.out.println("PATH: " + property);
+		// create and load default properties
+		Properties defaultProps = new Properties();
+		FileInputStream in = new FileInputStream("defaultProperties");
+		defaultProps.load(in);
+		in.close();
+
+// create application properties with default
+		Properties applicationProps = new Properties(defaultProps);
+		return applicationProps;
+	}
+
+
+	public void exampleOfReadingFromGoogleSheets() {
 
 		// Prints the names and majors of students in a sample spreadsheet:
 		// https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
 		String range = "Test!A1:E";
 		ValueRange response;
 		try {
-			Sheets service = GoogAuth.getSheetsService();
+			Sheets service = GoogAuth.getSheetsService(properties.getProperty("client_secret_path"));
 			response = service.spreadsheets().values().get(this.spreadsheetId, range).execute();
 			System.out.println(response.toPrettyString());
 			List<List<Object>> values = response.getValues();
@@ -74,7 +113,7 @@ public class OptionsScraper {
 		Sheets service;
 
 		try {
-			service = GoogAuth.getSheetsService();
+			service = GoogAuth.getSheetsService(properties.getProperty("client_secret_path"));
 			Spreadsheet response1;
 			response1 = service.spreadsheets().get(this.spreadsheetId).setIncludeGridData(false).execute();
 			List<Sheet> workSheetList = response1.getSheets();
@@ -121,7 +160,7 @@ public class OptionsScraper {
 
 		try {
 			System.out.println(updateCellReq.toPrettyString());
-			Sheets service = GoogAuth.getSheetsService();
+			Sheets service = GoogAuth.getSheetsService(properties.getProperty("client_secret_path"));
 			response = service.spreadsheets().batchUpdate(this.spreadsheetId, batchRequests).execute();
 			System.out.println(response.toPrettyString());
 		} catch (IOException e) {
@@ -142,10 +181,10 @@ public class OptionsScraper {
 		this.updateRows(sheetId, 0, 8, cellData);
 	}
 
-	public void go(String symbol, int sheetId) {
+	public Stock go(String symbol, Source optionServiceSource) {
 		Stock stock = new Stock(symbol, DEBUG);
 
-		switch (OptionServiceSource) {
+		switch (optionServiceSource) {
 			case TDA:
 				stock.loadData(new TDAStockOptionFetcher().setStock(stock));
 				break;
@@ -156,30 +195,29 @@ public class OptionsScraper {
 				stock.loadData(new YahooStockOptionFetcher().setStock(stock));
 				break;
 		}
-		stock.sortByAPR();
-		stock.print(Option.PUT);
 
-		return;
-
-
-//		this.setHeaders(sheetId);
-//		this.setCurrentPrice(sheetId, Float.parseFloat(stock.getUnderlyingPrice()));
-//		String writeRange = symbol + "!A2:H";
-//
-//		List<List<Object>> writeData = stock.optionChainToDataRange(Option.PUT);
-//
-//		ValueRange valueRange = new ValueRange().setValues(writeData).setMajorDimension("ROWS");
-//		System.out.println(valueRange.toString());
-//		try {
-//			Sheets service = GoogAuth.getSheetsService();
-//			service.spreadsheets().values().update(this.spreadsheetId, writeRange, valueRange)
-//					.setValueInputOption("USER_ENTERED").execute();
-//
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		return stock;
 
 	}
 
+	public void writeToGoogleSheets(Stock stock, int sheetId) {
+		this.setHeaders(sheetId);
+		String writeRange = stock.getSymbol() + "!A2:H";
+		this.setCurrentPrice(sheetId, stock.getUnderlyingPrice());
+
+		List<List<Object>> writeData = stock.optionChainToDataRange(Option.PUT);
+
+		ValueRange valueRange = new ValueRange().setValues(writeData).setMajorDimension("ROWS");
+		System.out.println(valueRange.toString());
+		try {
+			Sheets service = GoogAuth.getSheetsService(properties.getProperty("client_secret_path"));
+			service.spreadsheets().values().update(this.spreadsheetId, writeRange, valueRange)
+					.setValueInputOption("USER_ENTERED").execute();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 }
