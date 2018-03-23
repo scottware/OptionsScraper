@@ -15,6 +15,7 @@ public class Option {
 	private double apr;
 	private Stock stock;
 
+
 	public Option(Stock stock, int type, float strike, float price, float ask, float bid) {
 		this.setType(type);
 		this.setStrike(strike);
@@ -79,6 +80,13 @@ public class Option {
 
 	public int getType() {
 		return this.type;
+	}
+
+	public boolean isType(int optionType) {
+		if (getType() == optionType || optionType == Option.ANY)
+			return true;
+		else
+			return false;
 	}
 
 	public void setRatio() {

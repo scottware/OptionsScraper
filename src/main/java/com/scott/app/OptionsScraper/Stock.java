@@ -77,8 +77,27 @@ public class Stock {
 }
 
 class Filter implements Filters<Option> {
+
 	public boolean meetsRequirement(Option element) {
-		if (element.getAPR() > 27.0 && element.getAPR() < 31.0 && element.getType() == Option.PUT)
+
+		float apr_low = Float.parseFloat(OptionsScraper.properties.getProperty("filter_apr_low", "0"));
+		float apr_high = Float.parseFloat(OptionsScraper.properties.getProperty("filter_apr_high", "9999999"));
+
+		float strike_low = Float.parseFloat(OptionsScraper.properties.getProperty("filter_strike_low", "0"));
+		float strike_high = Float.parseFloat(OptionsScraper.properties.getProperty("filter_strike_high", "9999999"));
+
+		String optionTypeString = OptionsScraper.properties.getProperty("option_type", "ANY").toUpperCase();
+
+		int optionType = Option.ANY;
+		if (optionTypeString.equals("PUT")) {
+			optionType = Option.PUT;
+		} else if (optionTypeString.equals("CALL")) {
+			optionType = Option.PUT;
+		}
+
+		if (element.getAPR() > apr_low && element.getAPR() < apr_high
+				&& element.getStrike() > strike_low && element.getStrike() < strike_high
+				&& element.isType(optionType))
 			return true;
 		else
 			return false;
