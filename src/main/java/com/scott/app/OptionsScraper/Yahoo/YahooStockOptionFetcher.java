@@ -4,11 +4,12 @@ import com.scott.app.OptionsScraper.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.lang.reflect.Array;
 import com.scott.app.OptionsScraper.ArrayListFilterable;
-import java.util.HashSet;
+
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.TimeZone;
 
 public class YahooStockOptionFetcher implements IStockOptionFetcher {
 
@@ -60,6 +61,7 @@ public class YahooStockOptionFetcher implements IStockOptionFetcher {
 
 		JSONObject optionList = (JSONObject) ((JSONArray) result.get("options")).get(0);
 
+		Date today = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
 
 		JSONArray puts = (JSONArray) optionList.get("puts");
 		Iterator putIterator = puts.iterator();
@@ -70,8 +72,8 @@ public class YahooStockOptionFetcher implements IStockOptionFetcher {
 			Float ask = Float.parseFloat(putJSONObject.get("ask").toString());
 			Float lastPrice = Float.parseFloat(putJSONObject.get("lastPrice").toString());
 			Long expiration = Long.parseLong(putJSONObject.get("expiration").toString());
-			Option option = new Option(stock, Option.PUT, strike, lastPrice, ask, bid);
-			option.setDate(expiration);
+			Option option = new Option(stock, Option.PUT, strike, lastPrice, ask, bid, today);
+			option.setExpirationDate(expiration);
 			option.setAPR();
 			optionSet.add(option);
 		}
@@ -84,8 +86,8 @@ public class YahooStockOptionFetcher implements IStockOptionFetcher {
 			Float ask = Float.parseFloat(callJSONObject.get("ask").toString());
 			Float lastPrice = Float.parseFloat(callJSONObject.get("lastPrice").toString());
 			Long expiration = Long.parseLong(callJSONObject.get("expiration").toString());
-			Option option = new Option(stock, Option.CALL, strike, lastPrice, ask, bid);
-			option.setDate(expiration);
+			Option option = new Option(stock, Option.CALL, strike, lastPrice, ask, bid, today);
+			option.setExpirationDate(expiration);
 			option.setAPR();
 			optionSet.add(option);
 		}

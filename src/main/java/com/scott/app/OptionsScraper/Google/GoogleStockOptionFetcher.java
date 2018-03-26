@@ -1,15 +1,15 @@
 package com.scott.app.OptionsScraper.Google;
 
 import com.scott.app.OptionsScraper.ArrayListFilterable;
-import java.util.HashSet;
+
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.TimeZone;
 
 import com.scott.app.OptionsScraper.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 // https://query1.finance.yahoo.com/v7/finance/options/AMZN
 // https://query1.finance.yahoo.com/v7/finance/options/AMZN180302C01497500
@@ -63,6 +63,7 @@ public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 
 	private void processOption(JSONArray oOptions, ArrayListFilterable<Option> optionSet, int optionType, String year, String month,
 			String day) {
+		Date today = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
 		JSONArray options = (JSONArray) oOptions;
 		Iterator<String> optionsIterator = options.iterator();
 		while (optionsIterator.hasNext()) {
@@ -77,7 +78,7 @@ public class GoogleStockOptionFetcher implements IStockOptionFetcher {
 				float price = Float.parseFloat(sPrice);
 				float ask = Float.parseFloat(sAsk);
 				float bid = Float.parseFloat(sBid);
-				Option option = new Option(stock, optionType, strike, price, ask, bid);
+				Option option = new Option(stock, optionType, strike, price, ask, bid, today);
 				option.setDate(year, month, day);
 				optionSet.add(option);
 			} catch (NumberFormatException e) {

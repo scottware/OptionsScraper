@@ -11,12 +11,14 @@ public class Option {
 	private float strike, price, ask, bid;
 	private int type;
 	private float ratio;
-	private Date date;
+	private Date expirationDate;
 	private double apr;
 	private Stock stock;
+	private final Date calendarInstanceToday;
 
 
-	public Option(Stock stock, int type, float strike, float price, float ask, float bid) {
+	public Option(Stock stock, int type, float strike, float price, float ask, float bid, Date calendarInstance) {
+		this.calendarInstanceToday = calendarInstance;
 		this.setType(type);
 		this.setStrike(strike);
 		this.setPrice(price);
@@ -26,17 +28,20 @@ public class Option {
 		this.setStock(stock);
 	}
 
-	public String getDate() {
+	public String getExpirationDate() {
 		SimpleDateFormat dt1 = new SimpleDateFormat("M/dd/yyyy");
 		dt1.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-		return dt1.format(this.date);
+		return dt1.format(this.expirationDate);
 	}
 
-	public void setDate(Long epoch) {
-		// assumption is epoch time passed in is 12:00AM GMT on date of expiration.
+	public void setExpirationDate(Long epoch) {
+		// assumption is epoch time passed in is 12:00AM GMT on expirationDate of expiration.
 		// we need to convert that to 4:00 PM EST. To do that we need the offset difference
 		// plus 16 hours (12:00AM + 16:00 = 4:00PM)
+		if (epoch % 86400 != 0)
+			return;
+
 		//
 		// This is all custom logic for the Yahoo scraper.
 		// if others behave differently, this should be pushed down to the Yahoo logic layer.
@@ -44,13 +49,13 @@ public class Option {
 		long gmtOffset = TimeZone.getTimeZone("GMT").getOffset(epochMillis);
 		long estOffset = TimeZone.getTimeZone("America/New_York").getOffset(epochMillis);
 		long totalOffset = gmtOffset - estOffset + (16 * 60 * 60 * 1000L);
-		this.date = new Date(totalOffset + epochMillis);
+		this.expirationDate = new Date(totalOffset + epochMillis);
 	}
 
 	public void setDate(String year, String month, String day) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(day));
-		this.date = cal.getTime();
+		this.expirationDate = cal.getTime();
 	}
 
 	public Float getStrike() {
@@ -100,17 +105,14 @@ public class Option {
 	}
 
 	public void setAPR() {
-		Date today = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
-		double days = (this.date.getTime() - today.getTime()) / 86400000d;
-		double years = ((double) days) / 365d;
-		this.apr = 100 * Math.log((this.getStock().getUnderlyingPrice() + this.getBid()) / this.getStock().getUnderlyingPrice()) / years;
+		//Date today = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTime();
 
-		this.apr = 100 * Math.log((this.getStrike() + this.getBid()) / this.getStrike()) / years;
-		//	double a = (this.getStrike() + this.getPrice()) / this.getStrike();
-		//	double log = Math.log(a);
-		//System.out.println(days + " days. price: " + this.getStock().getUnderlyingPrice().toString());
-		//System.out.println(this.getStrike() + "*" + this.getPrice() + "*" + a + "*" + log + "*" + years + "*" + this.date.toString() + "*" + days + "*" + this.apr);
-		// =ln(strike+price/strike)/(days/365)
+		double days = (this.expirationDate.getTime() - calendarInstanceToday.getTime()) / 86400000d;
+		double years = ((double) days) / 365d;
+//		this.apr = 100 * Math.log((this.getStock().getUnderlyingPrice() + this.getBid()) / this.getStock().getUnderlyingPrice()) / years;
+
+//		this.apr = 100 * Math.log((this.getStrike() + this.getBid()) / this.getStrike()) / years;
+		this.apr = 100 * Math.log((this.getStrike()) / (this.getStrike() - this.getBid())) / years;
 	}
 
 	public float getAPR() {
@@ -127,7 +129,7 @@ public class Option {
 	}
 
 	public String toString() {
-		String output = this.getTypeAsString() + " " + this.getDate() + " $" + this.getStrike() + " $" + this.getPrice() + " "
+		String output = this.getTypeAsString() + " " + this.getExpirationDate() + " $" + this.getStrike() + " $" + this.getPrice() + " "
 				+ this.getAsk() + " " + this.getBid() + " " + Float.toString(this.getRatio()) + " " + String.format("%.2f", this.getAPR()) + "%";
 		return output;
 	}
@@ -135,7 +137,7 @@ public class Option {
 	public List<Object> toDataRow() {
 		List<Object> dataRow = new ArrayList<>();
 		dataRow.add(this.getTypeAsString());
-		dataRow.add(this.getDate());
+		dataRow.add(this.getExpirationDate());
 		dataRow.add("$" + this.getStrike());
 		dataRow.add("$" + this.getPrice());
 		dataRow.add("$" + this.getAsk());
