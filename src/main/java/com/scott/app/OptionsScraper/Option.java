@@ -35,12 +35,12 @@ public class Option {
 		return dt1.format(this.expirationDate);
 	}
 
-	public void setExpirationDate(Long epoch) {
+	public boolean setExpirationDate(Long epoch) {
 		// assumption is epoch time passed in is 12:00AM GMT on expirationDate of expiration.
 		// we need to convert that to 4:00 PM EST. To do that we need the offset difference
 		// plus 16 hours (12:00AM + 16:00 = 4:00PM)
 		if (epoch % 86400 != 0)
-			return;
+			return false;
 
 		//
 		// This is all custom logic for the Yahoo scraper.
@@ -50,6 +50,7 @@ public class Option {
 		long estOffset = TimeZone.getTimeZone("America/New_York").getOffset(epochMillis);
 		long totalOffset = gmtOffset - estOffset + (16 * 60 * 60 * 1000L);
 		this.expirationDate = new Date(totalOffset + epochMillis);
+		return true;
 	}
 
 	public void setDate(String year, String month, String day) {
@@ -112,7 +113,11 @@ public class Option {
 //		this.apr = 100 * Math.log((this.getStock().getUnderlyingPrice() + this.getBid()) / this.getStock().getUnderlyingPrice()) / years;
 
 //		this.apr = 100 * Math.log((this.getStrike() + this.getBid()) / this.getStrike()) / years;
-		this.apr = 100 * Math.log((this.getStrike()) / (this.getStrike() - this.getBid())) / years;
+		if (this.getBid() > this.getStrike()) {
+		this.apr = 0;
+		}
+		else
+			this.apr = 100 * Math.log((this.getStrike()) / (this.getStrike() - this.getBid())) / years;
 	}
 
 	public float getAPR() {

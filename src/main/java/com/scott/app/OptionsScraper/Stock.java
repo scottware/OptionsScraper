@@ -108,6 +108,8 @@ class SortByAPR implements Comparator<Option> {
 	public int compare(Option a, Option b) {
 		if (a.getAPR() > b.getAPR()) return -1;
 		else if (a.getAPR() < b.getAPR()) return 1;
-		else return 0;
+		else {
+			return 0;
+		}
 	}
 }

@@ -37,13 +37,14 @@ public class OptionTest {
 	public void setExpirationDate() {
 		Option testOption = new Option(new Stock("amzn"), Option.PUT, 0.0f, 0.0f, 0.0f, 0.0f, new Date(152199720000l));
 
-		testOption.setExpirationDate(1526601600l);
-		assertEquals("5/18/2018", testOption.getExpirationDate());
+		assertTrue("setExpectation",testOption.setExpirationDate(1526601600l));
+		assertEquals("getExpectation", "5/18/2018", testOption.getExpirationDate());
 
-		testOption.setExpirationDate(1521936000l); // 3/25/18 00:00 GMT, 3/24/18 17:00 PDT
-		assertEquals("3/25/2018", testOption.getExpirationDate());
+		assertTrue("setExpectation",testOption.setExpirationDate(1521936000l)); // 3/25/18 00:00 GMT, 3/24/18 17:00 PDT
+		assertEquals("getExpectation","3/25/2018", testOption.getExpirationDate());
 
-
+		assertFalse("setExpectation",testOption.setExpirationDate(1521936001l)); // 3/25/18 00:00:01 GMT, 3/24/18 17:00:01 PDT
+		assertFalse("setExpectation",testOption.setExpirationDate(1521935999l)); // 3/24/18 23:49:59 GMT, 3/24/18 16:59:59 PDT
 
 	}
 
