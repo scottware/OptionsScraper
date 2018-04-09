@@ -80,13 +80,13 @@ class Filter implements Filters<Option> {
 
 	public boolean meetsRequirement(Option element) {
 
-		float apr_low = Float.parseFloat(OptionsScraper.properties.getProperty("filter_apr_low", "0"));
-		float apr_high = Float.parseFloat(OptionsScraper.properties.getProperty("filter_apr_high", "9999999"));
+		float apr_low = Float.parseFloat(OptionsScraper.defaultProperties.getProperty("filter_apr_low", "0"));
+		float apr_high = Float.parseFloat(OptionsScraper.defaultProperties.getProperty("filter_apr_high", "9999999"));
 
-		float strike_low = Float.parseFloat(OptionsScraper.properties.getProperty("filter_strike_low", "0"));
-		float strike_high = Float.parseFloat(OptionsScraper.properties.getProperty("filter_strike_high", "9999999"));
+		float strike_low = Float.parseFloat(OptionsScraper.defaultProperties.getProperty("filter_strike_low", "0"));
+		float strike_high = Float.parseFloat(OptionsScraper.defaultProperties.getProperty("filter_strike_high", "9999999"));
 
-		String optionTypeString = OptionsScraper.properties.getProperty("option_type", "ANY").toUpperCase();
+		String optionTypeString = OptionsScraper.defaultProperties.getProperty("option_type", "ANY").toUpperCase();
 
 		int optionType = Option.ANY;
 		if (optionTypeString.equals("PUT")) {

@@ -1,7 +1,8 @@
 source:yhoo
 symbol:amzn
 option_type=put
-filter_apr_low=20.0
-filter_apr_high=25
-filter_strike_high=1500
-client_secret_path=/Users/scottware/Documents/GitHub/OptionsScraper/client_secret.json
+filter_apr_low=15.0
+filter_apr_high=20
+filter_strike_high=1450
+google_docs=false
+google_docs_properties=googleDocsProperties
