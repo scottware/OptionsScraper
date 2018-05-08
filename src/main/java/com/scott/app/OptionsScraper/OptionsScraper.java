@@ -63,9 +63,9 @@ public class OptionsScraper {
 		} catch (IllegalArgumentException e) {
 			//e.printStackTrace();
 		}
-		System.out.println("Source: " + dataSource);
+		System.out.println("Data Source: " + dataSource);
 
-
+		System.out.println("Symbol: " + symbol);
 		Stock stock = OS.go(symbol, dataSource);
 		stock.sortByAPR();
 		stock.print();
